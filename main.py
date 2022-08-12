@@ -4,7 +4,7 @@ from handlers import send_message, choose_language, set_language
 
 from telebot import TeleBot
 
-bot = TeleBot(токен наверное хз) # тут был токен, но он уже не действительный
+bot = TeleBot(токен наверное хз)
 
 
 def push(id_, text):
