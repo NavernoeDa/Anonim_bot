@@ -1,30 +1,10 @@
-"""
-
-Надо доделать кумчатке:
-в except вставить ошибку, где будет две ошибки, их нужно через кортеж.
- Пример: except(ValueError, IndexError) Если нужно выводить одно сообщение для нескольких ошибок
-
-Если нужно для определенных ошибок выводить какое-то соо то
-ПРИМЕР
-try:
-    <code>
-except название ошибки:
-    <code>
-except название ошибки:
-    <code>
-ну разберешься
-
-Так же протестируй, т.к у меня нет другого акка для тестов
-
-"""
-
 from database import DataBase
 from sqlite3 import IntegrityError
-from handlers import send_message
+from handlers import send_message, choose_language, set_language
 
 from telebot import TeleBot
 
-bot = TeleBot("token")
+bot = TeleBot("5248858950:AAFkpw-nkikucuz2dWXozodvgy0fJZEBsiw")
 
 
 def push(id_, text):
@@ -39,55 +19,61 @@ def push(id_, text):
 def start(message):
     try:
         DataBase().adding_to_the_database(message.from_user.id)
-        bot.reply_to(message, "Вы зарегистрированы\nОтправлять фотки БЕЗ СЖАТИЯ, ДОКУМЕНТОМ")
+        set_language(message.from_user.id, 'english')
+        bot.reply_to(message, choose_language(message.from_user.id, 'start', 'message'))
     except IntegrityError:
-        bot.reply_to(message, "Вы уже зареганы!")
+        bot.reply_to(message, choose_language(message.from_user.id, 'start', 'error'))
 
 
 @bot.message_handler(commands=['create_room'])
 def create_room(message):
     try:
         code_room = DataBase().create_room(message.from_user.id)
-        bot.reply_to(message, f"Комната с кодом {code_room} создана!")
+        bot.reply_to(message, choose_language(message.from_user.id, 'create_room', 'id1'))
         for id_ in DataBase().collecting_ids(0):
             bot.send_message(id_[0], f"Комната с кодом {code_room} создана!")
     except IntegrityError:
-        bot.reply_to(message, "Ты уже в комнате")
+        bot.reply_to(message, choose_language(message.from_user.id, 'create_room', 'error'))
 
 
 @bot.message_handler(commands=['join_room'])
 def join_room(message):
     try:
         if DataBase().get_private_on(message.from_user.id) == 1:
-            bot.reply_to(message, 'Ты уже в комнате')
+            bot.reply_to(message, choose_language(message.from_user.id, 'join_room', 'error'))
         else:
             code_room = message.text.split()[1]
             DataBase().join_room(message.from_user.id, int(code_room))
-            bot.reply_to(message, "Ты вошел в комнату!")
-            push(message.from_user.id, 'Собеседник присоединился')
+            bot.reply_to(message, choose_language(message.from_user.id, 'join_room', 'message'))
+            push(message.from_user.id, choose_language(message.from_user.id, 'join_room', 'message_user_join'))
     except ValueError:
-        bot.reply_to(message, "Комната занята")
+        bot.reply_to(message, choose_language(message.from_user.id, 'join_room', 'error_room_busy'))
     except TypeError:
-        bot.reply_to(message, "Такой комнаты нет")
+        bot.reply_to(message, choose_language(message.from_user.id, 'join_room', 'error_room_not_found'))
     except IndexError:
-        bot.reply_to(message, "Ты не ввёл комнату")
+        bot.reply_to(message, choose_language(message.from_user.id, 'join_room', 'error_number'))
 
 
 @bot.message_handler(commands=['disconnect'])
 def disconnect_room(message):
-    push(message.from_user.id, 'Собеседник отключился')
+    push(message.from_user.id, choose_language(message.from_user.id, 'disconnect', 'message'))
     DataBase().disconnect(message.from_user.id)
-    bot.reply_to(message, "Ты вышел из комнаты!")
+    bot.reply_to(message, choose_language(message.from_user.id, 'disconnect', 'message_left'))
 
 
 @bot.message_handler(commands=['delete_room'])
 def remove_room(message):
-    push(message.from_user.id, 'Комната удалена и ты в ней не состоишь')
+    push(message.from_user.id, choose_language(message.from_user.id, 'delete_room', 'message'))
     try:
         DataBase().delete_room(message.from_user.id)
-        bot.reply_to(message, "Комната удалена!")
+        bot.reply_to(message, choose_language(message.from_user.id, 'delete_room', 'message_room_delete'))
     except TypeError:
-        bot.reply_to(message, "У тебя нет комнаты во владении")
+        bot.reply_to(message, choose_language(message.from_user.id, 'delete_room', 'error'))
+
+
+@bot.message_handler(commands=['change_language'])
+def change_language(message):
+    set_language(message.from_user.id, message.text.split[1], is_change=True)
 
 
 @bot.message_handler(content_types=['text', 'sticker', 'audio', 'document', 'voice',
@@ -103,7 +89,7 @@ def main(message):
         friend_id = DataBase().getting_the_id(message.from_user.id)
         send_message(message, bot, friend_id)
 
-    bot.reply_to(message, "Сообщение отправлено!")
+    bot.reply_to(message, choose_language(message.from_user.id, 'service_messages', 'message_send'))
 
 
 if __name__ == "__main__":

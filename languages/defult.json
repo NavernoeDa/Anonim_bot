@@ -1,0 +1,30 @@
+{
+  "start": {
+    "message": "",
+    "error": ""
+  },
+  "create_room": {
+    "message": "",
+    "error": ""
+  },
+  "join_room": {
+    "error": "",
+    "message": "",
+    "message_user_join": "",
+    "error_room_busy": "",
+    "error_room_not_found": "",
+    "error_number": ""
+  },
+  "disconnect": {
+    "message": "",
+    "message_left": ""
+  },
+  "delete_room": {
+    "message": "",
+    "message_room_delete": "",
+    "error": ""
+  },
+  "service_messages": {
+    "message_send": ""
+  }
+}
