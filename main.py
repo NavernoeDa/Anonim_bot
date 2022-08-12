@@ -9,9 +9,7 @@ bot = TeleBot(токен наверное хз)
 
 def push(id_, text):
     id_two = DataBase().getting_the_id(id_)
-    if id_two == 0 or id_two is None:
-        pass
-    else:
+    if id_two != 0 or id_two != None:
         bot.send_message(id_two, text)
 
 
