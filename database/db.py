@@ -13,11 +13,6 @@ class DataBase:
         with self.connection:
             self.cursor.execute('INSERT INTO users(id, in_private) VALUES(?, 0)', [id_])
 
-    """ Язык по дефолту """
-    def add_language(self, id_: int):
-        with self.connection:
-            self.cursor.execute('INSERT INTO')
-
     """ Сбор id по значению in_private """
     def collecting_ids(self, in_private: int) -> list:
         with self.connection:
