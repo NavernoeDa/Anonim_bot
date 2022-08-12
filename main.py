@@ -4,12 +4,12 @@ from handlers import send_message, choose_language, set_language
 
 from telebot import TeleBot
 
-bot = TeleBot(токен наверное хз)
+bot = TeleBot('токен наверное хз')
 
 
 def push(id_, text):
     id_two = DataBase().getting_the_id(id_)
-    if id_two != 0 or id_two != None:
+    if id_two != 0 or id_two is not None:
         bot.send_message(id_two, text)
 
 
