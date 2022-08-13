@@ -4,7 +4,7 @@
     "error": "You are already registered!"
   },
   "create_room": {
-    "message": "A new room has been created: ",
+    "message": "A new room has been created: # пробел в конце обязателен #",
     "error": "You're already in the room"
   },
   "join_room": {
