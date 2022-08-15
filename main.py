@@ -1,16 +1,19 @@
 from database import DataBase
 from sqlite3 import IntegrityError
-from handlers import send_message, choose_language, set_language
+from handlers import send_message, choose_language, set_language, check_language
+from os import walk
 
 from telebot import TeleBot
 
-bot = TeleBot('токен наверное хз')
+bot = TeleBot("")
 
 
-def push(id_, text):
+def push(id_, section, message):
     id_two = DataBase().getting_the_id(id_)
-    if id_two != 0 or id_two is not None:
-        bot.send_message(id_two, text)
+    if id_two == 0 or id_two is None:
+        pass
+    else:
+        bot.send_message(id_two, choose_language(id_two, section, message))
 
 
 @bot.message_handler(commands=['start'])
@@ -27,9 +30,10 @@ def start(message):
 def create_room(message):
     try:
         code_room = DataBase().create_room(message.from_user.id)
-        bot.reply_to(message, choose_language(message.from_user.id, 'create_room', 'id1'))
+        text = f'{choose_language(message.from_user.id, "create_room", "message")}{code_room}'
+        bot.reply_to(message, text)
         for id_ in DataBase().collecting_ids(0):
-            bot.send_message(id_[0], f"Комната с кодом {code_room} создана!")
+            bot.send_message(id_[0], f'A new room has been created: {code_room}')
     except IntegrityError:
         bot.reply_to(message, choose_language(message.from_user.id, 'create_room', 'error'))
 
@@ -43,7 +47,7 @@ def join_room(message):
             code_room = message.text.split()[1]
             DataBase().join_room(message.from_user.id, int(code_room))
             bot.reply_to(message, choose_language(message.from_user.id, 'join_room', 'message'))
-            push(message.from_user.id, choose_language(message.from_user.id, 'join_room', 'message_user_join'))
+            push(message.from_user.id, 'join_room', 'message_user_join')
     except ValueError:
         bot.reply_to(message, choose_language(message.from_user.id, 'join_room', 'error_room_busy'))
     except TypeError:
@@ -54,14 +58,14 @@ def join_room(message):
 
 @bot.message_handler(commands=['disconnect'])
 def disconnect_room(message):
-    push(message.from_user.id, choose_language(message.from_user.id, 'disconnect', 'message'))
+    push(message.from_user.id, 'disconnect', 'message')
     DataBase().disconnect(message.from_user.id)
     bot.reply_to(message, choose_language(message.from_user.id, 'disconnect', 'message_left'))
 
 
 @bot.message_handler(commands=['delete_room'])
 def remove_room(message):
-    push(message.from_user.id, choose_language(message.from_user.id, 'delete_room', 'message'))
+    push(message.from_user.id, 'delete_room', 'message')
     try:
         DataBase().delete_room(message.from_user.id)
         bot.reply_to(message, choose_language(message.from_user.id, 'delete_room', 'message_room_delete'))
@@ -71,7 +75,18 @@ def remove_room(message):
 
 @bot.message_handler(commands=['change_language'])
 def change_language(message):
-    set_language(message.from_user.id, message.text.split[1], is_change=True)
+    if check_language(message.text.split()[1]):
+        set_language(message.from_user.id, message.text.split()[1], is_change=True)
+        bot.reply_to(message, choose_language(message.from_user.id, 'change_language', 'message'))
+    else:
+        bot.reply_to(message, choose_language(message.from_user.id, 'change_language', 'error'))
+
+        text = f'{choose_language(message.from_user.id, "service_messages", "all_languages")}\n'
+        for i in walk('./languages/main'):
+            for lang in i[2]:
+                text += f'\n{lang.split(".json")[0]}'
+
+        bot.send_message(message.from_user.id, text)
 
 
 @bot.message_handler(content_types=['text', 'sticker', 'audio', 'document', 'voice',

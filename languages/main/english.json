@@ -1,0 +1,35 @@
+{
+  "start": {
+    "message": "You are registered. Send photos WITHOUT COMPRESSION, AS A DOCUMENT\n\nYou can change the language by command",
+    "error": "You are already registered!"
+  },
+  "create_room": {
+    "message": "A new room has been created: ",
+    "error": "You're already in the room"
+  },
+  "join_room": {
+    "error": "You're already in the room!",
+    "message": "You entered the room",
+    "message_user_join": "The dude joined",
+    "error_room_busy": "The room taken",
+    "error_room_not_found": "Room not found",
+    "error_number": "You didn't enter the room number"
+  },
+  "disconnect": {
+    "message": "The dude disconnected",
+    "message_left": "You left the room"
+  },
+  "delete_room": {
+    "message": "The room has been removed and you are not a member of it",
+    "message_room_delete": "Room deleted",
+    "error": "You don't have a room"
+  },
+  "change_language": {
+    "message": "The language has been changed",
+    "error": "Language not found"
+  },
+  "service_messages": {
+    "message_send": "The message has been sent",
+    "all_languages": "Available languages: "
+  }
+}

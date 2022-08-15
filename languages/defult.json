@@ -24,7 +24,12 @@
     "message_room_delete": "",
     "error": ""
   },
+  "change_language": {
+    "message": "",
+    "error": ""
+  },
   "service_messages": {
-    "message_send": ""
+    "message_send": "",
+    "all_languages": ""
   }
 }
