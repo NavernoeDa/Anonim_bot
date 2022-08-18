@@ -10,9 +10,7 @@ bot = TeleBot("")
 
 def push(id_, section, message):
     id_two = DataBase().getting_the_id(id_)
-    if id_two == 0 or id_two is None:
-        pass
-    else:
+    if id_two != 0 or id_two != None:
         bot.send_message(id_two, choose_language(id_two, section, message))
 
 
